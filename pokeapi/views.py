@@ -1,19 +1,22 @@
-from traceback import print_tb
 from django.shortcuts import render
 import requests
 import json
 
-
 def convert(lst):
-    for l in lst:
-        print(l)
- 
-        dados={
-            'nome': l['nome'],
-            'url': l['url']
-        }
-
+    indice =0 
+    dados={}
+    for l in lst:   
+        dado={
+                'nome':l['name'],
+                'url': l['url']
+            }
+        #print(dados)
+        dados[indice]=dado
+        indice=indice+ 1
+    
     return dados
+
+
 
 def  index(request):
     webservice="https://pokeapi.co/api/v2/pokemon"
@@ -24,12 +27,12 @@ def  index(request):
     except ValueError:
             print("A resposta não chegou com o formato esperado.")
 
+    print(pokemons['results'][0]['name'])
     
-    print(pokemons['results'])
-    
-   
+    pokemons={
+        'pokemons':convert(pokemons['results'])
+    }
 
-
-    return render(request, "index.html", convert(pokemons['results']))
+    return render(request, "index.html",pokemons)
 
 
