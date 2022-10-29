@@ -1,3 +1,6 @@
+
+from traceback import print_tb
+from unicodedata import name
 from django.shortcuts import render
 import requests
 import json
@@ -19,20 +22,42 @@ def convert(lst):
 
 
 def  index(request):
-    webservice="https://pokeapi.co/api/v2/pokemon"
+    webservice="https://pokeapi.co/api/v2/pokemon/"
     req=requests.get(webservice)
     try:
         pokemons  = json.loads(req.content)
 
     except ValueError:
             print("A resposta não chegou com o formato esperado.")
-
-    print(pokemons['results'][0]['name'])
+   
+    nomes= []
     
-    pokemons={
-        'pokemons':convert(pokemons['results'])
-    }
+    for pokemon in pokemons['results']:
+      
+        
+        nomes.append(pokemon['name']) 
+    print(nomes)
 
-    return render(request, "index.html",pokemons)
+    nomes={'nomes':nomes}
+    return render(request, "index.html",nomes)
 
+
+
+
+
+
+
+def imagens(request):
+    webservice="https://pokeapi.co/api/v2/pokemon"
+    req=requests.get(webservice)
+
+    try:
+        pokemons = json.loads(req.content)
+
+    except:
+        print("A resposta não chegou com o formato esperado.")
+
+    return render(request,  pokemons)
+
+        
 
