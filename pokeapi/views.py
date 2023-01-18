@@ -1,9 +1,9 @@
-
-from traceback import print_tb
-from unicodedata import name
 from django.shortcuts import render
 import requests
 import json
+
+#DEFAULT WEB SERVICE FOR CONSULT
+WEB_SERVICE="https://pokeapi.co/api/v2/pokemon/"
 
 def convert(lst):
     indice =0 
@@ -19,10 +19,8 @@ def convert(lst):
     return dados
 
 
-
 def  index(request):
-    webservice="https://pokeapi.co/api/v2/pokemon/"
-    req=requests.get(webservice)
+    req=requests.get(WEB_SERVICE)
     try:
         pokemons  = json.loads(req.content)
 
@@ -48,10 +46,9 @@ def  index(request):
 
 #GET IMAGENS POKEMONS
 def get_figures():
-    webservice="https://pokeapi.co/api/v2/pokemon"
-    req=requests.get(webservice)
+    req=requests.get(WEB_SERVICE)
     figures=[]
-
+    pokemon_data=[]
     try:
         pokemons = json.loads(req.content)
 
@@ -59,21 +56,31 @@ def get_figures():
         print("A resposta não chegou com o formato esperado.")
     
     for pokemon in pokemons['results']: 
-        pokemon_data=pokemon['url']
-        req=requests.get(pokemon_data)
+        pokemon_data.append(pokemon['url'])
+        for p in pokemon_data:
+            req=requests.get(p)
+            try:
+                pokemons  = json.loads(req.content)
+                #print(pokemons)
+               
+                for i in pokemons:
+                    print()
+                    if i=='forms':
+                        for p in pokemons[i]: 
+                            req_figure=requests.get(p['url'])
+                            
+                            figure=json.loads(req_figure.content)
 
-        try:
-            pokemons  = json.loads(req.content)
-            if pokemons['forms']:
-                req_figure=requests.get(pokemons['forms'][0]['url'])
-                
-                figure=json.loads(req_figure.content)
-                #print(figure['sprites']['back_default'])
-                figures.append(figure['sprites']['back_default'])
+                            print(figure)
+                            figures.append(figure['sprites']['front_default'])
 
-            return figures
-        except ValueError:
-            print("A resposta não chegou com o formato esperado.")
+
+        
+            except ValueError:
+                print("A resposta não chegou com o formato esperado.")
+            
+        print(figures)
+        return figures
 
    
     
