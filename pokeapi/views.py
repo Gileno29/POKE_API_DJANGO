@@ -49,40 +49,61 @@ def get_figures():
     req=requests.get(WEB_SERVICE)
     figures=[]
     pokemon_data=[]
+    pokemon_url_figure=[]
     try:
         pokemons = json.loads(req.content)
 
     except:
         print("A resposta não chegou com o formato esperado.")
     
-    for pokemon in pokemons['results']: 
-        pokemon_data.append(pokemon['url'])
-        for p in pokemon_data:
-            req=requests.get(p)
-            try:
-                pokemons  = json.loads(req.content)
-                #print(pokemons)
-               
-                for i in pokemons:
-                    print()
-                    if i=='forms':
-                        for p in pokemons[i]: 
-                            req_figure=requests.get(p['url'])
-                            
-                            figure=json.loads(req_figure.content)
+    for p in range (len(pokemons['results'])): 
+        print('Esses são os results: ', type(pokemons['results']), len(pokemons['results']))
+        print('Pokemons: ', pokemons['results'][p]['url'])
+        pokemon_data.append(pokemons['results'][p]['url'])
 
-                            print(figure)
-                            figures.append(figure['sprites']['front_default'])
-
-
-        
-            except ValueError:
-                print("A resposta não chegou com o formato esperado.")
+    for p in pokemon_data:     
+        req=requests.get(p)
+        try:
+            pokemons  = json.loads(req.content)
+            #print(type(pokemons))
             
-        print(figures)
-        return figures
+            #print(pokemons['forms'])
+            pokemon_url_figure.append(pokemons['forms'])
 
-   
+                        
+        except Exception as e:
+            continue
+            
+
+    remover=":'}]"
+
+    for i in pokemon_url_figure:
+        print(i, type(i), len(i))
+        url= str(i).split('url')[1].replace(remover,'').strip()
+        print(url)
+        req_figure=requests.get(i[1])
+        
+        figure=json.loads(req_figure.content)
+
+        print(figure)
+        figures.append(figure['sprites']['front_default'])
+
     
+
+            
+      
+
+
+def format_string(caracteres, t):
+    palavra=''
+    for i in caracteres:
+        if palavra=='':
+            palavra=t.replace(i)
+        else:
+            palavra=palavra
+        
+    
+
+
         
 
