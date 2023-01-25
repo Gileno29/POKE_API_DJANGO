@@ -5,19 +5,6 @@ import json
 #DEFAULT WEB SERVICE FOR CONSULT
 WEB_SERVICE="https://pokeapi.co/api/v2/pokemon/"
 
-def convert(lst):
-    indice =0 
-    dados={}
-    for l in lst:   
-        dado={
-                'nome':l['name'],
-                'url': l['url']
-            }
-        dados[indice]=dado
-        indice=indice+ 1
-    
-    return dados
-
 
 def  index(request):
     req=requests.get(WEB_SERVICE)
@@ -31,10 +18,9 @@ def  index(request):
     
     for pokemon in pokemons['results']:
         nomes.append(pokemon['name']) 
-    print(nomes)
+ 
 
-    #nomes={'nomes':nomes}
-    figures={'figures': get_figures()}
+
     try:
         context_return=zip(nomes, get_figures())
         context={
@@ -42,6 +28,7 @@ def  index(request):
         }
     except Exception as e:
         pass
+
     return render(request, "index.html",context)
 
 
@@ -93,11 +80,6 @@ def get_figures():
     return figures
 
     
-
-            
-      
-
-
 def format_string(caracteres, t):
     palavra=''
     for i in caracteres:
