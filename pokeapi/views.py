@@ -35,10 +35,13 @@ def  index(request):
 
     #nomes={'nomes':nomes}
     figures={'figures': get_figures()}
-    context_return=zip(nomes, get_figures())
-    context={
-        'pokemons': context_return
-    }
+    try:
+        context_return=zip(nomes, get_figures())
+        context={
+            'pokemons': context_return
+        }
+    except Exception as e:
+        pass
     return render(request, "index.html",context)
 
 
@@ -78,15 +81,16 @@ def get_figures():
     remover=":'}]"
 
     for i in pokemon_url_figure:
-        print(i, type(i), len(i))
+        #print(i, type(i), len(i))
         url= str(i).split('url')[1].replace(remover,'').strip()
-        print(url)
-        req_figure=requests.get(i[1])
+        #print(url)
+        req_figure=requests.get(url.replace("'}]", "").replace("': '", ""))
         
         figure=json.loads(req_figure.content)
 
-        print(figure)
+        #print(figure['sprites']['front_default'])
         figures.append(figure['sprites']['front_default'])
+    return figures
 
     
 
